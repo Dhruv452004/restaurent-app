@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Menu - Spice Garden Restaurant{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Delicious Menu</h1>
+        <p class="text-xl opacity-90">Authentic flavors crafted with passion</p>
+    </div>
+</section>
+
+<!-- Search and Filter Section -->
+<section class="py-8 bg-white shadow-md sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search dishes..." 
+                           class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <!-- Category Filters -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterCategory('all')" 
+                        class="category-btn px-6 py-2 rounded-full font-semibold transition-all {% if current_category == 'all' %}bg-orange-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-orange-100{% endif %}">
+                    All Items
+                </button>
+                {% for category in categories %}
+                <button onclick="filterCategory('{{ category }}')" 
+                        class="category-btn px-6 py-2 rounded-full font-semibold transition-all {% if current_category == category %}bg-orange-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-orange-100{% endif %}">
+                    {{ category.replace('_', ' ').title() }}
+                </button>
+                {% endfor %}
+            </div>
+            
+            <!-- Sort Dropdown -->
+            <div class="relative">
+                <select id="sortSelect" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-8 focus:ring-2 focus:ring-orange-500">
+                    <option value="name">Sort by Name</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Items Section -->
+<section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="hidden text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+            <p class="text-gray-600 mt-2">Loading menu items...</p>
+        </div>
+        
+        <!-- Menu Items Grid -->
+        <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if items %}
+                {% for item in items %}
+                <div class="menu-item bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" 
+                     data-category="{{ item.category }}" 
+                     data-name="{{ item.name.lower() }}" 
+                     data-price="{{ item.price }}">
+                    <!-- Item Image -->
+                    <div class="relative h-48 overflow-hidden">
+                        {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" 
+                                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                        {% else %}
+                            <div class="w-full h-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                                <i class="fas fa-utensils text-4xl text-white opacity-80"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Category Badge -->
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-white bg-opacity-90 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold">
+                                {{ item.category.replace('_', ' ').title() }}
+                            </span>
+                        </div>
+                        
+                        <!-- Availability Badge -->
+                        {% if item.available %}
+                            <div class="absolute top-3 right-3">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-check mr-1"></i>Available
+                                </span>
+                            </div>
+                        {% else %}
+                            <div class="absolute top-3 right-3">
+                                <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-times mr-1"></i>Out of Stock
+                                </span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Item Details -->
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-gray-800 leading-tight">{{ item.name }}</h3>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-orange-600">₹{{ "%.0f"|format(item.price) }}</div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            {{ item.description or 'A delicious dish prepared with authentic spices and fresh ingredients.' }}
+                        </p>
+                        
+                        <!-- Spice Level Indicator -->
+                        <div class="flex items-center mb-4">
+                            <span class="text-sm font-medium text-gray-700 mr-2">Spice Level:</span>
+                            <div class="flex space-x-1">
+                                {% set spice_level = range(1, 4) | random %}
+                                {% for i in range(1, 4) %}
+                                    <i class="fas fa-pepper-hot text-sm {% if i <= spice_level %}text-red-500{% else %}text-gray-300{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex space-x-3">
+                            {% if item.available %}
+                                <button class="add-to-cart-btn flex-1 bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition-all duration-200 transform hover:scale-105"
+                                        data-item-id="{{ item.id }}"
+                                        data-item-name="{{ item.name }}"
+                                        data-item-price="{{ item.price }}">
+                                    <i class="fas fa-plus mr-2"></i>Add to Cart
+                                </button>
+                                <button class="quick-order-btn px-4 py-3 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-600 hover:text-white transition-all duration-200"
+                                        data-item-id="{{ item.id }}">
+                                    <i class="fas fa-bolt"></i>
+                                </button>
+                            {% else %}
+                                <button disabled 
+                                        class="flex-1 bg-gray-400 text-white py-3 rounded-lg font-semibold cursor-not-allowed">
+                                    <i class="fas fa-times mr-2"></i>Out of Stock
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+
+
+
+            
+                <!-- Empty State -->
+                <div class="col-span-full text-center py-16">
+                    <div class="max-w-md mx-auto">
+                        <i class="fas fa-utensils text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-2xl font-semibold text-gray-600 mb-2">No items found</h3>
+                        <p class="text-gray-500 mb-6">Try adjusting your search or filter criteria</p>
+                        <button onclick="resetFilters()" 
+                                class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition">
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- No Results Message -->
+        <div id="noResults" class="hidden col-span-full text-center py-16">
+            <div class="max-w-md mx-auto">
+                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-2xl font-semibold text-gray-600 mb-2">No dishes found</h3>
+                <p class="text-gray-500 mb-6">Try searching for something else or browse all categories</p>
+                <button onclick="resetSearch()" 
+                        class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition">
+                    Clear Search
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cart Summary (Fixed Bottom) -->
+<div id="cartSummary" class="hidden fixed bottom-6 right-6 bg-white rounded-lg shadow-xl border-2 border-orange-200 p-4 z-50 max-w-sm">
+    <div class="flex items-center justify-between mb-2">
+        <h4 class="font-semibold text-gray-800">Cart Summary</h4>
+        <button onclick="closeCart()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div id="cartItems" class="space-y-2 mb-3"></div>
+    <div class="border-t pt-3">
+        <div class="flex justify-between items-center mb-3">
+            <span class="font-semibold">Total: </span>
+            <span id="cartTotal" class="text-xl font-bold text-orange-600">₹0</span>
+        </div>
+        <button onclick="proceedToOrder()" 
+                class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition">
+            <i class="fas fa-shopping-cart mr-2"></i>Order Now
+        </button>
+    </div>
+</div>
+
+<!-- External JavaScript -->
+<script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+{% endblock %}
