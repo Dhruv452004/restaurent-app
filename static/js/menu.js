@@ -46,27 +46,22 @@ function initializeEventListeners() {
 
 // Category Filter
 function filterCategory(category) {
-    showLoading();
+    const items = document.querySelectorAll('.menu-item');
+    let visibleCount = 0;
     
-    setTimeout(() => {
-        const items = document.querySelectorAll('.menu-item');
-        let visibleCount = 0;
-        
-        items.forEach(item => {
-            if (category === 'all' || item.dataset.category === category) {
-                item.style.display = 'block';
-                visibleCount++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-        
-        // Update active category button
-        updateActiveCategoryButton(event.target);
-        
-        checkNoResults(visibleCount);
-        hideLoading();
-    }, 300);
+    items.forEach(item => {
+        if (category === 'all' || item.dataset.category === category) {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Update active category button
+    updateActiveCategoryButton(event.target);
+    
+    checkNoResults(visibleCount);
 }
 
 function updateActiveCategoryButton(activeButton) {
@@ -108,26 +103,21 @@ function handleSort(e) {
     const container = document.getElementById('menuGrid');
     const items = Array.from(document.querySelectorAll('.menu-item'));
     
-    showLoading();
+    items.sort((a, b) => {
+        switch(sortBy) {
+            case 'name':
+                return a.dataset.name.localeCompare(b.dataset.name);
+            case 'price-low':
+                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            case 'price-high':
+                return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            default:
+                return 0;
+        }
+    });
     
-    setTimeout(() => {
-        items.sort((a, b) => {
-            switch(sortBy) {
-                case 'name':
-                    return a.dataset.name.localeCompare(b.dataset.name);
-                case 'price-low':
-                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-                case 'price-high':
-                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-                default:
-                    return 0;
-            }
-        });
-        
-        // Re-append sorted items
-        items.forEach(item => container.appendChild(item));
-        hideLoading();
-    }, 200);
+    // Re-append sorted items
+    items.forEach(item => container.appendChild(item));
 }
 
 // Cart Functions
@@ -252,7 +242,7 @@ function quickOrder(itemId) {
     const itemName = itemElement ? itemElement.querySelector('h3').textContent : 'Item';
     
     // Create WhatsApp message
-    const phoneNumber = '919876543210'; // Replace with actual number
+    const phoneNumber = '919354328799'; // Replace with actual number
     const message = `Hi! I'd like to order ${itemName} from Spice Garden Restaurant.`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     

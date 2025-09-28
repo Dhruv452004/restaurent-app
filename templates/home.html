@@ -13,13 +13,13 @@
         <p class="text-xl md:text-2xl mb-8 opacity-90">
             Authentic Indian Flavors, Modern Dining Experience
         </p>
-        <div class="space-x-4">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{{ url_for('menu') }}" 
-               class="bg-yellow-500 text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-yellow-400 transition">
+               class="bg-yellow-500 text-gray-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-yellow-400 transition text-center">
                 <i class="fas fa-utensils mr-2"></i>View Menu
             </a>
             <a href="{{ url_for('reservations') }}" 
-               class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-gray-900 transition">
+               class="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-white hover:text-gray-900 transition text-center">
                 <i class="fas fa-calendar-alt mr-2"></i>Book Table
             </a>
         </div>
@@ -115,13 +115,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready for an Amazing Experience?</h2>
         <p class="text-xl mb-8 opacity-90">Book your table now and taste the difference</p>
-        <div class="space-x-4">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{{ url_for('reservations') }}" 
-               class="bg-orange-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-orange-700 transition">
+               class="bg-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-orange-700 transition text-center">
                 <i class="fas fa-calendar-check mr-2"></i>Reserve Now
             </a>
-            <a href="tel:+919876543210" 
-               class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-gray-900 transition">
+            <a href="tel:+919354328799" 
+               class="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-white hover:text-gray-900 transition text-center">
                 <i class="fas fa-phone mr-2"></i>Call Us
             </a>
         </div>

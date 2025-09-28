@@ -292,11 +292,11 @@ function clearMessage() {
 
 // Quick contact functions
 function callRestaurant() {
-    window.open('tel:+919876543210', '_self');
+    window.open('tel:+919354328799', '_self');
 }
 
 function sendWhatsApp() {
-    const phoneNumber = '919876543210';
+    const phoneNumber = '919354328799';
     const message = 'Hi! I have a question about Spice Garden Restaurant.';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -305,7 +305,7 @@ function sendWhatsApp() {
 function sendEmail() {
     const subject = 'Inquiry from Website';
     const body = 'Hello,\n\nI have a question about Spice Garden Restaurant.\n\nBest regards';
-    const emailUrl = `mailto:info@spicegarden.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const emailUrl = `mailto:dhruvsaxena3002@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(emailUrl, '_self');
 }
 
