@@ -1,17 +1,20 @@
-# app.py - Main Flask Application
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+# app.py - main app
+from flask import Flask, render_template, request, jsonify
+from menu import menu_items
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
+# --- Flask setup ---
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
-# Database Models
+# --- Models ---
 class MenuItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -41,10 +44,31 @@ class Contact(db.Model):
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Routes
+# --- Email Function ---
+def send_email(subject, body):
+    sender_email = "yourgmail@gmail.com"  # Replace with your Gmail
+    sender_password = "your-app-password"  # Gmail App Password
+    receiver_email = "dhruvsaxena3002@gmail.com"
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Error sending email: {e}")
+
+# --- Routes ---
 @app.route('/')
 def home():
-    # Featured menu items
     featured_items = MenuItem.query.filter_by(available=True).limit(6).all()
     return render_template('home.html', featured_items=featured_items)
 
@@ -55,7 +79,6 @@ def menu():
         items = MenuItem.query.filter_by(available=True).all()
     else:
         items = MenuItem.query.filter_by(category=category, available=True).all()
-    
     categories = ['starters', 'main_course', 'desserts', 'beverages']
     return render_template('menu.html', items=items, categories=categories, current_category=category)
 
@@ -63,7 +86,6 @@ def menu():
 def reservations():
     if request.method == 'POST':
         try:
-            # Handle reservation form
             reservation = Reservation(
                 name=request.form['name'],
                 email=request.form['email'],
@@ -73,134 +95,73 @@ def reservations():
                 guests=int(request.form['guests']),
                 message=request.form.get('message', '')
             )
-            
             db.session.add(reservation)
             db.session.commit()
-            
-            # Always return JSON for AJAX requests
-            return jsonify({
-                'success': True, 
-                'message': 'Reservation request submitted successfully! We will confirm shortly.'
-            })
-                
+
+            # Send email notification
+            email_subject = f"New Reservation from {reservation.name}"
+            email_body = f"""
+                        Name: {reservation.name}
+                        Email: {reservation.email}
+                        Phone: {reservation.phone}
+                        Date: {reservation.date}
+                        Time: {reservation.time}
+                        Guests: {reservation.guests}
+                        Message: {reservation.message}
+                        """
+            send_email(email_subject, email_body)
+            return jsonify({'success': True, 'message': 'Reservation submitted and email sent!'})
         except Exception as e:
-            print(f"Error creating reservation: {e}")
-            return jsonify({
-                'success': False, 
-                'message': 'There was an error processing your reservation. Please try again.'
-            }), 400
-    
+            print(f"Error: {e}")
+            return jsonify({'success': False, 'message': 'Error processing reservation'}), 400
     return render_template('reservations.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
         try:
-            # Handle contact form
             contact = Contact(
                 name=request.form['name'],
                 email=request.form['email'],
                 subject=request.form['subject'],
                 message=request.form['message']
             )
-            
             db.session.add(contact)
             db.session.commit()
-            
-            # Always return JSON for AJAX requests
-            return jsonify({
-                'success': True, 
-                'message': 'Message sent successfully! We will get back to you soon.'
-            })
-                
+
+            # Send email notification
+            email_subject = f"New Contact Message from {contact.name}"
+            email_body = f"""
+Name: {contact.name}
+Email: {contact.email}
+Subject: {contact.subject}
+Message: {contact.message}
+"""
+            send_email(email_subject, email_body)
+            return jsonify({'success': True, 'message': 'Message sent and email notification sent!'})
         except Exception as e:
-            print(f"Error creating contact: {e}")
-            return jsonify({
-                'success': False, 
-                'message': 'There was an error sending your message. Please try again.'
-            }), 400
-    
+            print(f"Error: {e}")
+            return jsonify({'success': False, 'message': 'Error sending message'}), 400
     return render_template('contact.html')
 
-# Admin Routes
-@app.route('/admin')
-def admin():
-    return render_template('admin/dashboard.html')
-
-@app.route('/admin/menu')
-def admin_menu():
-    items = MenuItem.query.all()
-    return render_template('admin/menu.html', items=items)
-
-@app.route('/admin/reservations')
-def admin_reservations():
-    reservations = Reservation.query.order_by(Reservation.created_at.desc()).all()
-    return render_template('admin/reservations.html', reservations=reservations)
-
-@app.route('/admin/contacts')
-def admin_contacts():
-    contacts = Contact.query.order_by(Contact.created_at.desc()).all()
-    return render_template('admin/contacts.html', contacts=contacts)
-
-# API Routes
-@app.route('/api/menu')
-def api_menu():
-    items = MenuItem.query.filter_by(available=True).all()
-    return jsonify([{
-        'id': item.id,
-        'name': item.name,
-        'description': item.description,
-        'price': item.price,
-        'category': item.category,
-        'image_url': item.image_url
-    } for item in items])
-
-@app.route('/api/reservation/<int:id>/confirm', methods=['POST'])
-def confirm_reservation(id):
-    reservation = Reservation.query.get_or_404(id)
-    reservation.status = 'confirmed'
-    db.session.commit()
-    return jsonify({'status': 'success', 'message': 'Reservation confirmed'})
-
-# Initialize database
+# --- Initialize database and menu items ---
 def create_tables():
     with app.app_context():
         db.create_all()
-        
-        # Add sample menu items if empty
         if MenuItem.query.count() == 0:
-            sample_items = [
-                MenuItem(
-                    name='Paneer Tikka',
-                    description='Grilled paneer with spices',
-                    price=250.0,
-                    category='starters'
-                ),
-                MenuItem(
-                    name='Shahi Paneer',
-                    description='Creamy tomato curry with paneer',
-                    price=350.0,
-                    category='main_course'
-                ),
-                MenuItem(
-                    name='Gulab Jamun',
-                    description='Sweet milk dumplings in syrup',
-                    price=120.0,
-                    category='desserts'
-                ),
-                MenuItem(
-                    name='Lassi',
-                    description='Traditional yogurt drink',
-                    price=80.0,
-                    category='beverages'
-                )
-            ]
-            for item in sample_items:
-                db.session.add(item)
+            for item in menu_items:
+                db.session.add(MenuItem(
+                    name=item["name"],
+                    description=item.get("description"),
+                    price=item["price"],
+                    category=item["category"],
+                    image_url=item.get("image_url"),
+                    available=item.get("available", True)
+                ))
             db.session.commit()
 
-# Call this when starting the app
 create_tables()
 
+# --- Run App ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
