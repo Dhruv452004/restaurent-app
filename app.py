@@ -6,11 +6,23 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
 
 # --- Flask setup ---
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
+
+# --- Database config (Local + Render + Vercel) ---
+if os.environ.get('VERCEL'):
+    # Vercel → only /tmp is writable (not persistent)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/restaurant.db'
+elif os.environ.get('RENDER'):
+    # Render → use instance folder (persistent)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/restaurant.db'
+else:
+    # Local development
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -101,14 +113,14 @@ def reservations():
             # Send email notification
             email_subject = f"New Reservation from {reservation.name}"
             email_body = f"""
-                        Name: {reservation.name}
-                        Email: {reservation.email}
-                        Phone: {reservation.phone}
-                        Date: {reservation.date}
-                        Time: {reservation.time}
-                        Guests: {reservation.guests}
-                        Message: {reservation.message}
-                        """
+            Name: {reservation.name}
+            Email: {reservation.email}
+            Phone: {reservation.phone}
+            Date: {reservation.date}
+            Time: {reservation.time}
+            Guests: {reservation.guests}
+            Message: {reservation.message}
+            """
             send_email(email_subject, email_body)
             return jsonify({'success': True, 'message': 'Reservation submitted and email sent!'})
         except Exception as e:
@@ -132,11 +144,11 @@ def contact():
             # Send email notification
             email_subject = f"New Contact Message from {contact.name}"
             email_body = f"""
-Name: {contact.name}
-Email: {contact.email}
-Subject: {contact.subject}
-Message: {contact.message}
-"""
+            Name: {contact.name}
+            Email: {contact.email}
+            Subject: {contact.subject}
+            Message: {contact.message}
+            """
             send_email(email_subject, email_body)
             return jsonify({'success': True, 'message': 'Message sent and email notification sent!'})
         except Exception as e:
@@ -164,4 +176,4 @@ create_tables()
 
 # --- Run App ---
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
