@@ -1,16 +1,16 @@
 # Spice Garden 🍴
 
 <p align="center">
-  <a href="https://restaurent-app-gzma.onrender.com/">
+  <a href="https://restaurent-app-gzma.onrender.com/" target="_blank">
     <img alt="Live Site" src="https://img.shields.io/badge/Live-Online-green?style=flat-square" />
   </a>
-  <a href="https://github.com/Dhruv452004">
+  <a href="https://github.com/Dhruv452004" target="_blank">
     <img alt="GitHub" src="https://img.shields.io/badge/GitHub-Dhruv452004-181717?style=flat-square&logo=github" />
   </a>
-  <a href="https://instagram.com/dhruvsaxena303">
+  <a href="https://instagram.com/dhruvsaxena303" target="_blank">
     <img alt="Instagram" src="https://img.shields.io/badge/Instagram-@dhruvsaxena303-E4405F?style=flat-square&logo=instagram" />
   </a>
-  <a href="mailto:dhruvsaxena3002@gmail.com">
+  <a href="mailto:dhruvsaxena3002@gmail.com" target="_blank">
     <img alt="Email" src="https://img.shields.io/badge/Email-dhruvsaxena3002@gmail.com-blue?style=flat-square&logo=gmail" />
   </a>
   <a>
