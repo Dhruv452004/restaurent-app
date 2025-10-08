@@ -1,8 +1,25 @@
 # Spice Garden 🍴
 
-![Website Badge](https://img.shields.io/badge/Live%20Site-Online-green)
-![Python Badge](https://img.shields.io/badge/Python-3.11-blue)
-![Flask Badge](https://img.shields.io/badge/Flask-2.3.2-orange)
+<p align="center">
+  <a href="https://restaurent-app-gzma.onrender.com/">
+    <img alt="Live Site" src="https://img.shields.io/badge/Live-Online-green?style=flat-square" />
+  </a>
+  <a href="https://github.com/Dhruv452004">
+    <img alt="GitHub" src="https://img.shields.io/badge/GitHub-Dhruv452004-181717?style=flat-square&logo=github" />
+  </a>
+  <a href="https://instagram.com/dhruvsaxena303">
+    <img alt="Instagram" src="https://img.shields.io/badge/Instagram-@dhruvsaxena303-E4405F?style=flat-square&logo=instagram" />
+  </a>
+  <a href="mailto:dhruvsaxena3002@gmail.com">
+    <img alt="Email" src="https://img.shields.io/badge/Email-dhruvsaxena3002@gmail.com-blue?style=flat-square&logo=gmail" />
+  </a>
+  <a>
+    <img alt="Python" src="https://img.shields.io/badge/Python-3.11-blue?style=flat-square" />
+  </a>
+  <a>
+    <img alt="Flask" src="https://img.shields.io/badge/Flask-2.3.2-orange?style=flat-square" />
+  </a>
+</p>
 
 **Spice Garden** is an online restaurant booking web application built with **Flask**, **Tailwind CSS**, **Jinja Template Inheritance**, and **JavaScript** for a modern, responsive, and interactive frontend. The application is deployed on [Render](https://restaurent-app-gzma.onrender.com/) for live access.
 
@@ -16,14 +33,11 @@ Check out the live website here: [Spice Garden Live](https://restaurent-app-gzma
 ---
 
 ## 🔹 Features
-- Fully responsive UI using **Tailwind CSS**
-- Dynamic content rendering with **Jinja template inheritance**
-- Interactive frontend powered by **JavaScript**
-- Backend powered by **Python (Flask)** for routing and logic
-- Selectable time slots for booking (currently non-functional placeholder)
-
----
-
+- Fully responsive UI using **Tailwind CSS**  
+- Dynamic content rendering with **Jinja template inheritance**  
+- Interactive frontend powered by **JavaScript**  
+- Backend powered by **Python (Flask)** for routing and logic  
+- Selectable time slots for booking (currently non-functional placeholder)  
 
 ---
 
@@ -36,7 +50,7 @@ Check out the live website here: [Spice Garden Live](https://restaurent-app-gzma
 ---
 
 ## 🔹 Project Structure
-
+```text
 restaurent-app/
 │
 ├── app.py # Main Flask application
@@ -44,16 +58,16 @@ restaurent-app/
 ├── templates/ # HTML templates with Jinja2
 │ ├── base.html
 │ ├── contact.html
-│ └── home.html
+│ ├── home.html
 │ ├── menu.html
-│ ├── reservations.html
+│ └── reservations.html
 ├── static/ # Static files (CSS, JS, images)
 │ ├── css/
 │ ├── images/
 │ └── js/
 ├── requirements.txt # Python dependencies
 
----
+````
 
 ## 🔹 Upcoming Features
 - Full **seat booking functionality** with time slots
@@ -96,7 +110,9 @@ pip install -r requirements.txt
 4. **Run the Flask app:**
 ```bash
 python app.py
-or
+
+#or
+
 flask run
 
 
@@ -118,16 +134,5 @@ Submit a pull reques
 
 ## 🔹 License
 
-This project is open-source and available under the MIT License.
-
-
-## 🔹 Contact
-
-For questions or feedback, feel free to reach out:
-
-GitHub: Dhruv452004
-
-Instagram: @dhruvsaxena303
-
-Email: dhruvsaxena3002@gmai.com
+This project is open-source.
 
