@@ -128,7 +128,7 @@ Create a new branch
 
 Add features or fix bugs
 
-Submit a pull reques
+Submit a pull request
 
 
 
