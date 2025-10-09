@@ -1,3 +1,17 @@
+# 📝 Menu Management Guide:
+
+# - Add new items by copying and pasting the dictionary format above
+
+# - Set "available" to False to temporarily hide items from the menu
+
+# - Use existing categories: starters, main_course, desserts, beverages
+
+# - Image URLs should always start with "static/images/"
+
+# - Keep prices in decimal format for consistency
+
+# - Maintain the same structure for all menu items
+
 menu_items = [
     {
         "name": "Paneer Tikka",
@@ -31,5 +45,4 @@ menu_items = [
         "image_url": "static/images/lassi.png",
         "available": True
     },
-    # Yahan tu aur items add kar sakta hai easily
 ]
