@@ -82,7 +82,7 @@ restaurent-app/
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/restaurent-app.git
+git clone https://github.com/Dhruv452004/restaurent-app.git
 cd restaurent-app
 
 
